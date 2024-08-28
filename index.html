@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+
+
+<head>
+  <title>Koe, a voice assistant AI</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/x-icon" href="/assets/icon.gif">
+</head>
+<script type="text/javascript">
+    const URL = "https://teachablemachine.withgoogle.com/models/cpBZLbE-i/";
+    let listening = false
+
+    async function createModel() {
+        const checkpointURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
+
+        const recognizer = speechCommands.create(
+            "BROWSER_FFT",
+            undefined,
+            checkpointURL,
+            metadataURL);
+
+
+        await recognizer.ensureModelLoaded();
+
+        return recognizer;
+    }
+
+    async function init() {
+        const recognizer = await createModel();
+        const classLabels = recognizer.wordLabels(); 
+
+        recognizer.listen(result => {
+          let koeNoise = result.scores[1]
+          const THRESHOLD = 0.85 // 0.75-0.9 best
+          console.log(koeNoise)
+          let autoVoiceChecked = document.getElementById('autoVoiceDetection');
+          if (koeNoise > THRESHOLD && !listening && autoVoiceChecked.checked) {
+            listening = true
+
+            console.log("Activated / アクティブ化した")
+            let randomLine = pickRandomLine()
+            speak(randomLine).then(() => {
+              
+              process()
+              
+              changeListeningAfterWait()
+            });
+              
+          }
+          
+        }, {
+            includeSpectrogram: true, 
+            probabilityThreshold: 0.75,
+            invokeCallbackOnNoiseAndUnknown: true,
+            overlapFactor: 0.5 
+        });
+    }
+
+    init()
+    async function changeListeningAfterWait() {
+      await wait(7000)
+      listening = false
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('loading').style.display = 'none';
+    }
+
+    function pickRandomLine() {
+      let randomMessages = [
+              'こんにちは',
+              'はあいい',
+              'おおっすう',
+              'やっほおう',
+            ]
+            let now = new Date();
+            let hour = now.getHours()
+            const morningOnlyGreeting = 'おはようー'
+            const nightOnlyGreeting = 'こんばんは'
+
+            randomMessages = randomMessages.filter(msg => msg !== morningOnlyGreeting && msg !== nightOnlyGreeting);
+            console.log(hour)
+            if (hour >= 5 && hour < 12) { // Morning
+              randomMessages.push(morningOnlyGreeting);
+            } else if (hour >= 18 && hour < 23) { // Evening
+              randomMessages.push(nightOnlyGreeting);
+            } 
+
+            let randomIndex =  Math.floor(Math.random() * randomMessages.length);
+            return randomMessages[randomIndex]
+    }
+
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }   
+
+    function triggerKoe() {
+      if (!listening) {
+
+        listening = true
+        let randomLine = pickRandomLine()
+        document.getElementById('loading').style.fontSize = '40px'
+            speak(randomLine).then(() => {
+              process()
+              
+              changeListeningAfterWait()
+            });
+      }
+    }
+
+    //text chat
+
+</script>
+
+
+<body>
+  <p style="display:flex; justify-content: center;">Describe any circumstances, emotions, stories, and more to Koe, and you will receive specific and contextually correct Japanese vocabulary to describe them!</p>
+  <div id="chatscreen">
+    <div id="messages" class="scrollable">
+    </div>
+  </div>
+    
+
+  <div id="chatbar">
+    <form id="chatbox" style="display: flex;">
+      <div id="loading">考えている…	</div>
+      <div id="result">聞いている…	</div>
+      <input type="text" id="chatinput" autocomplete='off' placeholder='Start typing or speak "Koe." Press enter to send.' />
+    </form>
+    <button type="button" onclick="triggerKoe()" id="speakbutton"><img src="assets/mic.png" width="60px"></button>
+
+    <img id='settings' src="assets/settings_wikimediacommons.png" width="64px" height="64px">
+  </div>
+
+
+  <div id="settingsContainer">
+    <h1>Settings</h1>
+
+    <div class="settings-option">
+      <h2>Voice:</h2>
+      <select class="custom-select" id='voiceChoice' style="width:200px;">
+        <option>コエちゃん</option>
+        <option>コエくん</option>
+        <option>コエさん</option>
+      </select>
+      <button type="button" onclick="speak('よろしく、こえです。')">Sample</button>
+    </div>
+    
+
+
+    <!--
+      <h2>Background:</h2>
+      <select>
+       Perhaps a 3d background
+      </select> 
+    -->
+    <div class="settings-option">
+      <h2>Automatic Voice Detection</h2>
+      <label for="autoVoiceDetection">Detect and respond to 'Koe' at all times</label>
+      <input type="checkbox" id="autoVoiceDetection" name="autoVoiceDetection" checked>
+    </div>
+  
+
+      <div class="settings-option">
+        <h2>Clear Chat History</h2>
+        <button id="clearmessagesbutton">Clear</button>
+      </div>
+  
+  </div>
+
+  <script type="module" src='./script.js'></script>
+</body>
+</html>

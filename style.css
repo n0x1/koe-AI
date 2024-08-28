@@ -1,0 +1,227 @@
+/* @font-face {
+  font-family: 'Yuruka';
+  src: url('assets/Yuruka.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+} */ /* if i ever use yuruka again */
+
+
+:root {
+  --br: 12px;
+ /* color-scheme: light dark; */ /* themes are prob just gonna be user selectable, not device based */
+}
+
+
+html {
+  height: 100%;
+  width: 100%;
+  background-color: #cac9d4;
+  font-family: 'Yuruka', sans-serif;
+}
+
+#chatscreen { 
+  margin: 0 20%;
+  background-color: #5e6c82;
+  height: 600px;
+  overflow:scroll;
+  margin-top:2.5%;
+  padding:10px 20px;
+  border:2px solid black;
+  border-top-left-radius: var(--br);
+  border-top-right-radius: var(--br)
+}
+
+
+
+#chatbar {
+  background-color: #656565;
+  margin: 0 20%;
+  display: flex;
+  border-bottom-left-radius: var(--br);
+  border-bottom-right-radius: var(--br);
+  border: 2px solid black;
+  border-top:0px;
+}
+
+
+#result,
+#loading {
+  display: none;
+  font-size: 30px !important;
+  margin-left:10%;
+}
+
+
+#messages {
+  display: flex;
+  flex-direction: column;
+  overflow:scroll;
+  height:100%;
+  padding-right:1.5%;
+}
+.user {
+  background:#9e9e9e;
+  align-self: flex-end;
+  border-top-left-radius: var(--br);
+  border-top-right-radius: var(--br);
+  border-bottom-left-radius: var(--br);
+}
+.system {
+  background: #9e99ff;
+  border-top-left-radius: var(--br);
+  border-top-right-radius: var(--br);
+  border-bottom-right-radius: var(--br);
+}
+
+.user,
+.system {
+  box-sizing: border-box;
+  max-width: 75%;
+  width: fit-content;
+  height: fit-content;
+  padding: 0.2% 1%;
+  margin:2px;
+  border: solid 2px #5c5251;
+  font-size:1.5rem;
+  gap:10px;
+  word-wrap: break-word;
+}
+
+
+
+#chatbar {
+  display: flex;
+  align-items: center;
+  gap:2px;
+  padding: 2px 0px 2px 2px;
+}
+
+#chatbox {
+  width:80%;
+}
+
+
+#chatinput {
+  height:25px;
+  width:80%;
+  background-color: #cac9d4;
+  margin: 0 10px;
+  border-radius: 4px;
+  border:1px solid black;
+  padding:2px 4px;
+}
+#chatinput:focus-visible {
+  outline: none;
+}
+
+#settings {
+  cursor: pointer;
+  transition: transform 0.3s ease; /* Smooth animation */
+}
+
+#settingsContainer {
+  position: fixed; 
+
+  width: 50%; /*20% for sidebar*/
+  height: 70%; 
+  top: 10%; /* 25% for sidebar*/
+  left: 25%;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(115,115,115,0.99);
+  z-index: 1; 
+  border-radius: 4px;
+  padding:12px;
+  border: 2px solid black;
+}
+
+/* seperator in settings */
+.settings-option {
+  margin-bottom: 2px;
+  box-shadow: 0 1px rgba(0, 0, 0, 0.2);
+
+}
+
+.custom-select { /* custom select */
+  position:relative;
+}
+
+.custom-select select {
+  display:none;
+}
+
+.select-selected {
+  background-color: aqua;
+}
+
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+}
+
+#speakbutton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease; /* Smooth animation */
+}
+
+#speakbutton:hover, #settings:hover {
+ 
+  transform: scale(1.05); /* Increase size by 5% */
+}
+
+/* custom scrollbar */ 
+.scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background: rgba(138, 138, 138, 0.5);
+  border-radius: 10px;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background:rgba(175, 175, 175, 0.6);
+  border-radius: 10px;
+}
+
+.scrollable::-webkit-scrollbar-thumb:hover {
+  background:rgba(147, 147, 147, 0.6);
+}
+
+.scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(138, 138, 138, 0.5) transparent;
+  overflow-x: hidden;
+}
+
+/* responsive design */
+@media only screen and (max-width: 1200px) {
+  #chatscreen, #chatbar {
+    margin: 0 15%
+  }
+  #settingsContainer {
+    width: 65%;
+    left:16.25%;
+    top:10%;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  #chatscreen, #chatbar {
+    margin: 0
+  }
+  #settingsContainer {
+    width: 90%;
+    left:2.5%;
+    top:10%
+  }
+}
+
