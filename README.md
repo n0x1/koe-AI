@@ -4,5 +4,5 @@ Koe is a voice/text-based AI for assisting users with learning Japanese vocabula
 
 tools: openai API, teachable machine
 
->if responses are cut off, increase max tokens
+>if responses are cut off, increase max tokens  //  
 >note: chromium-based browsers do **not** support web speech synthesis api
