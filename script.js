@@ -1,5 +1,5 @@
+
 const apiKey = import.meta.env.VITE_HC_API_KEY;
-let userMessage;
 let messageViaText = false;
 
 async function hear() {
@@ -63,7 +63,6 @@ document.getElementById('clearmessagesbutton').addEventListener('click', functio
 function addMessage({ role, content }) {
   let message = document.createElement('div');
   message.innerText = content;
-  userMessage = content;
   document.getElementById("messages").appendChild(message);
 
   if (role === 'user') message.classList.add('user');
