@@ -1,5 +1,8 @@
+import Groq from 'groq-sdk';
+const groqKey = import.meta.env.GROQ_API_KEY;
+const groq = new Groq({ apiKey: groqKey });
 
-const apiKey = import.meta.env.VITE_HC_API_KEY;
+
 let messageViaText = false;
 
 async function hear() {
@@ -150,28 +153,21 @@ async function speak(message) {
 
 async function answer(message) {
   async function fetchData() {
-    const response = await fetch("https://jamsapi.hackclub.dev/openai/chat/completions", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        'model': 'gpt-3.5-turbo',
-        'messages': [
-          {
-            'role': 'user',
-            'content': `You are a native speaker, highly knowledgable Japanese teacher, named Koe, who is teaching students contextual vocabulary words and phrases. A student will describe a scenario in English, then you must use all the details of the description to produce one or several words or phrases that are the most fitting and specific for only the key vocabulary in that scenario. Your responses should contain only an unnumbered list of the word or phrase generated, with no preamble or other text that is not the vocabulary. Focus on the intent of the description to provide the best word or phrase. The list should be formatted with the word/phrase, then English definition; with a new line for each new vocabulary. Do not use English outside of defining the Japanese vocabulary. Directly after Kanji words, provide the kanji's furigana enclosed in parentheses. Additionally, after any words which may be な adjectives, place a ~な directly after. An example of your typical response, formatted correctly: 'I slipped on a banana peel in the supermarket
-            げんき~な (げんき) : energetic, lively
-            転ぶ (ころぶ) : to slip/fall
-            スーパー : supermarket'
-            Here is the student's scenario: ${message}`
-          }
-        ],
-        'max_tokens': 50,
-        'temperature': 0.7
-      })
-    });
+    const response = await groq.chat.completions
+    .create({
+      messages: [
+        {
+          role: "user",
+          content: `You are a native speaker, highly knowledgable Japanese teacher, named Koe, who is teaching students contextual vocabulary words and phrases. A student will describe a scenario in English, then you must use all the details of the description to produce one or several words or phrases that are the most fitting and specific for only the key vocabulary in that scenario. Your responses should contain only an unnumbered list of the word or phrase generated, with no preamble or other text that is not the vocabulary. Focus on the intent of the description to provide the best word or phrase. The list should be formatted with the word/phrase, then English definition; with a new line for each new vocabulary. Do not use English outside of defining the Japanese vocabulary. Directly after Kanji words, provide the kanji's furigana enclosed in parentheses. Additionally, after any words which may be な adjectives, place a ~な directly after. An example of your typical response, formatted correctly: 'I slipped on a banana peel in the supermarket
+    げんき~な (げんき) : energetic, lively
+    転ぶ (ころぶ) : to slip/fall
+    スーパー : supermarket'
+    Here is the student's scenario: ${message}`,
+        },
+      ],
+      model: "gemma2-9b-it",
+      max_tokens: 50
+    })
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
